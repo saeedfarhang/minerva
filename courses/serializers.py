@@ -12,7 +12,6 @@ class CourseSerializer(serializers.ModelSerializer):
         fields = "__all__"
         
 class LessonSerializer(serializers.ModelSerializer):
-    course = serializers.CharField(source='course.title')
     class Meta:
         model = Lessons
         fields = "__all__"

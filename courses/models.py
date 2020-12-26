@@ -23,6 +23,7 @@ class Course(models.Model):
 
 
 class Lessons(models.Model):
+    video = models.FileField(blank=True)
     title = models.CharField(max_length = 100)
     description = models.TextField()
     master = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT )

@@ -172,7 +172,7 @@ export default function Dashboard(props) {
           {User.is_master ? (
             <Paper className={classes.paper}>
               <Grid>
-                <MasterCoursesList />
+                <MasterCoursesList user_id={User.id} />
               </Grid>
             </Paper>
           ) : null}

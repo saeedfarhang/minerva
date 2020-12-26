@@ -30,8 +30,6 @@ Citys = (
     ('esfahan', 'esfahan')
 )
 
-
-
 class UserAccount(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
@@ -41,7 +39,7 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
     birth_date = models.DateField(null=True , blank=True)
     city = models.CharField(max_length=12, null=True, choices=Citys, default='tehran' , blank=True)
     address = models.CharField(null=True , blank=True,max_length=112)
-    coins = models.IntegerField(null = True , blank=True)
+    coins = models.IntegerField(default=0)
     
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -70,5 +68,13 @@ class UserBasket(models.Model):
     user = models.ForeignKey(UserAccount, on_delete=models.CASCADE)
     courses = models.ManyToManyField(Course, blank=True)
 
+    def basket_cost(self, user):
+        cost = 0
+        for item in self.objects.get(user=user).courses.all():
+            cost += item.price
+
+        return cost
+
     def __str__(self):
         return str(self.user)
+

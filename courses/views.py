@@ -19,7 +19,6 @@ class CourseView(APIView):
     def post(self, request):
         data = request.data
         user = request.user
-        print(user.name)
         if user.is_master:
             data.update({'master' : user.id})
             data.update({'selected' : False})
@@ -68,24 +67,39 @@ class CourseDetail(APIView):
 class SelectedCoursesView(APIView):
     def get(self, request):
         queryset = Course.get_selected_courses(self)
-
         
         course_serializer = CourseSerializer(queryset, many=True)
         
         return Response(course_serializer.data)
 
 
-class LessonsView(viewsets.ViewSet):
-    def create(self, request):
-        title = request.data['title']
-        description = request.data['description']
-        course = request.data['course']
-        course = Course.objects.get(id = course)
-        user = request.user
-        if course.master == user:
-            lesson = Lessons.objects.create(title= title, description = description, course = course , master=user)
-            lesson.save()
-            lesson_serializer = LessonSerializer(lesson)
-            return Response(lesson_serializer.data)
+class LessonsView(APIView):
+    def post(self,request, courseid):
+        data = request.data
+        if request.user.is_master:
+            data.update({"master":request.user.id})    
+            try:
+                course = Course.objects.get(id = courseid)
+            except (e):
+                return Response({'error':'use a valid course id'},status=status.HTTP_400_BAD_REQUEST)
+
+
+            data.update({"course":courseid})
+            if master == course.master:
+                pass
+
+        
+        return Response({'error':'you are not allow'},status=status.HTTP_403_FORBIDDEN)
+
+
+
+# get list of master courses
+class MasterCoursesView(APIView):
+    def get(self,request,masterid):
+        user = User.objects.get(id = masterid)
+        if user.is_master:
+            userCourses = Course.objects.filter(master=user)
+            serializer = CourseSerializer(userCourses, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         else:
-            return Response({'error':'not the course master'})
+            return Response({'error':"user is not a master"}, status=status.HTTP_400_BAD_REQUEST)

@@ -31,6 +31,7 @@ class UserBasketView(APIView):
         return Response(serializer.data)
 
 
+
 class UsersView(APIView):
     permission_classes = (permissions.AllowAny, )
     def get(self ,request):
@@ -44,8 +45,6 @@ class UsersDetailView(APIView):
         user = User.objects.get(id=id)
         serializer = UserListSerializer(user)
         return Response(serializer.data)
-
-
 
 
 
